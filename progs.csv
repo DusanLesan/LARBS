@@ -41,20 +41,23 @@ A,gtk-theme-arc-gruvbox-git,gives the dark GTK theme used in LARBS.
 ,mediainfo,shows audio and video information.
 ,atool,manages and gives information about archives.
 ,highlight,can highlight code output.
-,code,Code – OSS
-,geany,Fast and lightweight IDE
-,pcmanfm-gtk3,Extremely fast and lightweight file manager
-,htop,Interactive process viewer
-,transmission-gtk,A feature rich cross platform Transmission BitTorrent client
-,vlc,"A multi-platform MPEG, VCD/DVD, and DivX player "
-,ly,TUI display manager
-A,smartgit,Git client with Hg and SVN support.
-A,insomnia,Cross-platform HTTP and GraphQL Client
-A,X2x-git,"Allows the keyboard, mouse on one X display to control another X display"
-A,skypeforlinux-stable-bin,Skypeforlinux-stable-bin
-A,mattermost-desktop-bin,Mattermost Desktop for Linux
-A,slack-desktop,Slack Desktop (Beta) for Linux
-A,zoom,Spooky video conferencing service you should not use
+,code,is Microsoft’s IDE
+,geany,is fast and lightweight IDE
+,pcmanfm-gtk3,is fast and lightweight file manager
+,htop,is interactive process viewer
+,transmission-gtk,is a feature rich cross platform Transmission BitTorrent client
+,vlc,"is a multi-platform MPEG, VCD/DVD, and DivX player "
+,zsh-autosuggestions,suggests commands as you type based on history and completions
+,zsh-completions,provides additional completion definitions for Zsh
+,zsh-history-substring-search,alows serching history with with up and down keys
+,zsh-syntax-highlighting,provides syntax highlighting for the zsh
+A,ly,is TUI display manager
+A,smartgit,is git client with Hg and SVN support.
+A,X2x-git,"allows the keyboard, mouse on one X display to control another X display"
+A,skypeforlinux-stable-bin,is Skype client
+A,mattermost-desktop-bin,is Mattermost desktop client
+A,slack-desktop,is Slack Desktop client
+A,zoom,is spooky video conferencing service you should not use
 G,https://github.com/DusanLesan/dwmblocks.git,serves as the modular status bar.
 G,https://github.com/DusanLesan/dmenu.git,runs commands and provides a UI for selection.
 G,https://github.com/DusanLesan/st.git,is my custom build of suckless's terminal emulator.
