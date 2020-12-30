@@ -1,63 +1,83 @@
 #TAG,NAME IN REPO (or git url),PURPOSE (should be a verb phrase to sound right while installing)
-,xorg-server,is the graphical server.
-,xorg-xwininfo,allows querying information about windows.
-,xorg-xinit,starts the graphical server.
-,xorg-xprop,is a tool for detecting window properties.
-,xorg-xbacklight,enables changing screen brightness levels.
-,exfat-utils,allows management of FAT drives.
-,ntfs-3g,allows accessing NTFS partitions.
-,dosfstools,allows your computer to access dos-like filesystems.
-,ttf-linux-libertine,provides the sans and serif fonts for LARBS.
+,adapta-gtk-theme,is gtk+ theme
+,alacritty,is GPU-accelerated terminal emulator
 ,arandr,is a UI for screen adjustment.
-,bc,is used for a dropdown calculator.
-,calcurse,is a lightweight terminal-based calendar.
-,xcompmgr,is for transparency and removing screen-tearing.
-,libnotify,allows desktop notifications.
+,code,is Microsoft’s IDE
+,cronie,is task scheduler
+,dnsmasq,is required for making wifi hotspots
+,dosfstools,allows your computer to access dos-like filesystems.
 ,dunst,is a suckless notification system.
-,sxiv,is a minimalist image viewer.
-,xwallpaper,sets the wallpaper.
+,efibootmgr,is user-space application to modify the EFI Boot Manager
+,exfat-utils,allows management of FAT drives.
 ,ffmpeg,can record and splice video and audio on the command line.
-,gnome-keyring,serves as the system keyring.
-A,gtk-theme-arc-gruvbox-git,gives the dark GTK theme used in LARBS.
-,mpd,is a lightweight music daemon.
-,mpc,is a terminal interface for mpd.
-,mpv,is the patrician's choice video player.
-,man-db,lets you read man pages of programs.
-,ncmpcpp,a ncurses interface for music with multiple formats and a powerful tag editor.
+,file-roller,is archive manager
 ,firefox,is standalone web browser from mozill.org
-,noto-fonts-emoji,is an emoji font.
+,fzf,is command-line fuzzy finder
+,gamemode,allows games to request optimisations from host OS
+,geany,is fast and lightweight IDE
+,gnome-keyring,serves as the system keyring.
+,gvfs,is virtual filesystem implementation for GIO
+,gvfs-mtp,is MTP backend for phone support
+,highlight,can highlight code output.
+,htop,is interactive process viewer
+,inetutils,is collection of common network programs providing telnet
+,libnotify,allows desktop notifications.
+,libreoffice-still,is office suite
+,lxsession,X11 session manager
+,lynx,is a terminal browser.
+,maim,can take quick screenshots at your request.
+,man-db,lets you read man pages of programs.
+,mediainfo,shows audio and video information.
+,mpc,is a terminal interface for mpd.
+,mpd,is a lightweight music daemon.
+,mpv,is the patrician's choice video player.
+,nano,is simple text editor
+,ncmpcpp,a ncurses interface for music with multiple formats and a powerful tag editor.
+,networkmanager-openvpn,is network manager module for openvpn
+,npm,is  package manager for javascript
+,ntfs-3g,allows accessing NTFS partitions.
+,p7zip,is file archiver
+,pamixer,is a command-line audio interface.
+,pcmanfm-gtk3,is fast and lightweight file manager
+,perl-file-mimeinfo,are used for generic support in xdg-open
+,poppler,manipulates .pdfs and gives .pdf previews and other .pdf functions.
 ,pulseaudio-alsa,is the audio system.
 ,pulsemixer,is an audio controler.
-,pamixer,is a command-line audio interface.
-,maim,can take quick screenshots at your request.
+,qt5-styleplugins,allows theming of QT5 apps
+,steam,is Valve's digital software delivery system
+,sxiv,is a minimalist image viewer.
+,thunderbird,is mail reader
+,transmission-gtk,is a feature rich cross platform Transmission BitTorrent client
+,ttf-linux-libertine,provides the sans and serif fonts for LARBS.
+,ttf-nerd-fonts-symbols,is collection of extra glyphs from popular 'iconic fonts'
 ,unclutter,hides an inactive mouse.
 ,unrar,extracts rar's.
 ,unzip,unzips zips.
-,lynx,is a terminal browser.
-,xcape,gives the special escape/super mappings of LARBS.
-,xclip,allows for copying and pasting from the command line.
-,youtube-dl,can download any YouTube video (or playlist or channel) when given the link.
-,poppler,manipulates .pdfs and gives .pdf previews and other .pdf functions.
-,mediainfo,shows audio and video information.
-,atool,manages and gives information about archives.
-,highlight,can highlight code output.
-,code,is Microsoft’s IDE
-,geany,is fast and lightweight IDE
-,pcmanfm-gtk3,is fast and lightweight file manager
-,htop,is interactive process viewer
-,transmission-gtk,is a feature rich cross platform Transmission BitTorrent client
 ,vlc,"is a multi-platform MPEG, VCD/DVD, and DivX player "
+,xclip,allows for copying and pasting from the command line.
+,xcompmgr,is for transparency and removing screen-tearing.
+,xdotool,is X11 automation tool
+,xdg-utils,are command line tools that assist with a variety of desktop tasks
+,xorg-server,is the graphical server.
+,xorg-xbacklight,enables changing screen brightness levels.
+,xorg-xinit,starts the graphical server.
+,xorg-xprop,is a tool for detecting window properties.
+,xorg-xwininfo,allows querying information about windows.
+,xwallpaper,sets the wallpaper.
+,youtube-dl,can download any YouTube video (or playlist or channel) when given the link.
 ,zsh-autosuggestions,suggests commands as you type based on history and completions
 ,zsh-completions,provides additional completion definitions for Zsh
 ,zsh-history-substring-search,alows serching history with with up and down keys
 ,zsh-syntax-highlighting,provides syntax highlighting for the zsh
 A,ly,is TUI display manager
+A,lf-git,is a terminal file manager
 A,smartgit,is git client with Hg and SVN support.
-A,X2x-git,"allows the keyboard, mouse on one X display to control another X display"
+A,x2x-git,"allows the keyboard, mouse on one X display to control another X display"
 A,skypeforlinux-stable-bin,is Skype client
 A,mattermost-desktop-bin,is Mattermost desktop client
 A,slack-desktop,is Slack Desktop client
 A,zoom,is spooky video conferencing service you should not use
+A,timeshift,is a system restore utility
 G,https://github.com/DusanLesan/dwmblocks.git,serves as the modular status bar.
 G,https://github.com/DusanLesan/dmenu.git,runs commands and provides a UI for selection.
 G,https://github.com/DusanLesan/st.git,is my custom build of suckless's terminal emulator.
