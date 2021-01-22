@@ -11,7 +11,6 @@
 ,exfat-utils,allows management of FAT drives.
 ,ffmpeg,can record and splice video and audio on the command line.
 ,file-roller,is archive manager
-,firefox,is standalone web browser from mozill.org
 ,fzf,is command-line fuzzy finder
 ,gamemode,allows games to request optimisations from host OS
 ,geany,is fast and lightweight IDE
@@ -44,6 +43,7 @@
 ,pulseaudio-alsa,is the audio system.
 ,pulsemixer,is an audio controler.
 ,qt5-styleplugins,allows theming of QT5 apps
+,sshfs,is ssh file transfer protocol client
 ,steam,is Valve's digital software delivery system
 ,sxiv,is a minimalist image viewer.
 ,thunderbird,is mail reader
@@ -69,6 +69,8 @@
 ,zsh-completions,provides additional completion definitions for Zsh
 ,zsh-history-substring-search,alows serching history with with up and down keys
 ,zsh-syntax-highlighting,provides syntax highlighting for the zsh
+A,brave-bin,is chromium based web browser
+A,insomnia-bin,is API Client and Design Platform for GraphQL and REST
 A,ly,is TUI display manager
 A,lf-git,is a terminal file manager
 A,smartgit,is git client with Hg and SVN support.
