@@ -4,8 +4,10 @@
 ,arandr,is a UI for screen adjustment.
 ,code,is Microsoft’s IDE
 ,cronie,is task scheduler
+,deepin-gtk-theme,is gtk+ theme
 ,dnsmasq,is required for making wifi hotspots
 ,dosfstools,allows your computer to access dos-like filesystems.
+,dragon-drag-and-drop,is simple drag-and-drop source/sink for X
 ,dunst,is a suckless notification system.
 ,efibootmgr,is user-space application to modify the EFI Boot Manager
 ,exfat-utils,allows management of FAT drives.
@@ -15,11 +17,11 @@
 ,gamemode,allows games to request optimisations from host OS
 ,geany,is fast and lightweight IDE
 ,gnome-keyring,serves as the system keyring.
-,gvfs,is virtual filesystem implementation for GIO
-,gvfs-mtp,is MTP backend for phone support
 ,highlight,can highlight code output.
 ,htop,is interactive process viewer
 ,inetutils,is collection of common network programs providing telnet
+,jq,is command-line JSON processor
+,libmtp,is library implementation of the Media Transfer Protocol
 ,libnotify,allows desktop notifications.
 ,libreoffice-still,is office suite
 ,lxsession,X11 session manager
@@ -32,12 +34,12 @@
 ,mpv,is the patrician's choice video player.
 ,nano,is simple text editor
 ,ncmpcpp,a ncurses interface for music with multiple formats and a powerful tag editor.
+,neovim,is text editor
 ,networkmanager-openvpn,is network manager module for openvpn
 ,npm,is  package manager for javascript
 ,ntfs-3g,allows accessing NTFS partitions.
 ,p7zip,is file archiver
 ,pamixer,is a command-line audio interface.
-,pcmanfm-gtk3,is fast and lightweight file manager
 ,perl-file-mimeinfo,are used for generic support in xdg-open
 ,poppler,manipulates .pdfs and gives .pdf previews and other .pdf functions.
 ,pulseaudio-alsa,is the audio system.
@@ -46,7 +48,6 @@
 ,sshfs,is ssh file transfer protocol client
 ,steam,is Valve's digital software delivery system
 ,sxiv,is a minimalist image viewer.
-,thunderbird,is mail reader
 ,transmission-gtk,is a feature rich cross platform Transmission BitTorrent client
 ,ttf-linux-libertine,provides the sans and serif fonts for LARBS.
 ,ttf-nerd-fonts-symbols,is collection of extra glyphs from popular 'iconic fonts'
@@ -71,8 +72,10 @@
 ,zsh-syntax-highlighting,provides syntax highlighting for the zsh
 A,brave-bin,is chromium based web browser
 A,insomnia-bin,is API Client and Design Platform for GraphQL and REST
+A,jmtpfs,is FUSE and libmtp based filesystem for accessing MTP
 A,ly,is TUI display manager
 A,lf-git,is a terminal file manager
+A,mailspring,is email client
 A,smartgit,is git client with Hg and SVN support.
 A,x2x-git,"allows the keyboard, mouse on one X display to control another X display"
 A,skypeforlinux-stable-bin,is Skype client
