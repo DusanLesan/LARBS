@@ -236,6 +236,9 @@ killall pulseaudio; sudo -u pulseaudio --start
 # Enable display manager
 sudo systemctl enable ly.service
 
+# Remove dialog
+pacman -Rsns --noconfirm dialog
+
 # This line, overwriting the `newperms` command above will allow the user to run
 # serveral important commands, `shutdown`, `reboot`, updating, etc. without a password.
 newperms "%wheel ALL=(ALL) ALL #LARBS

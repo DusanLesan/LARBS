@@ -1,5 +1,6 @@
 #TAG,NAME IN REPO (or git url),PURPOSE (should be a verb phrase to sound right while installing)
 ,alacritty,is GPU-accelerated terminal emulator
+,android-file-transfer,is Android MTP client with minimalistic UI
 ,arandr,is a UI for screen adjustment.
 ,code,is Microsoft’s IDE
 ,cronie,is task scheduler
@@ -18,16 +19,13 @@
 ,gnome-keyring,serves as the system keyring.
 ,highlight,can highlight code output.
 ,htop,is interactive process viewer
+,imagemagick,is image viewing/manipulation program
 ,inetutils,is collection of common network programs providing telnet
-,jq,is command-line JSON processor
-,libmtp,is library implementation of the Media Transfer Protocol
 ,libnotify,allows desktop notifications.
 ,libreoffice-still,is office suite
 ,lxsession,X11 session manager
-,lynx,is a terminal browser.
 ,maim,can take quick screenshots at your request.
 ,man-db,lets you read man pages of programs.
-,mediainfo,shows audio and video information.
 ,mpc,is a terminal interface for mpd.
 ,mpd,is a lightweight music daemon.
 ,mpv,is the patrician's choice video player.
@@ -35,24 +33,23 @@
 ,ncmpcpp,a ncurses interface for music with multiple formats and a powerful tag editor.
 ,neovim,is text editor
 ,networkmanager-openvpn,is network manager module for openvpn
-,npm,is  package manager for javascript
 ,ntfs-3g,allows accessing NTFS partitions.
 ,p7zip,is file archiver
 ,pamixer,is a command-line audio interface.
 ,perl-file-mimeinfo,are used for generic support in xdg-open
-,poppler,manipulates .pdfs and gives .pdf previews and other .pdf functions.
 ,pulseaudio-alsa,is the audio system.
 ,pulsemixer,is an audio controler.
 ,qt5-styleplugins,allows theming of QT5 apps
 ,sshfs,is ssh file transfer protocol client
 ,steam,is Valve's digital software delivery system
-,sxiv,is a minimalist image viewer.
 ,transmission-gtk,is a feature rich cross platform Transmission BitTorrent client
+,ttf-jetbrains-mono,is typeface for developers by JetBrains
 ,ttf-linux-libertine,provides the sans and serif fonts for LARBS.
 ,ttf-nerd-fonts-symbols,is collection of extra glyphs from popular 'iconic fonts'
 ,unclutter,hides an inactive mouse.
 ,unrar,extracts rar's.
 ,unzip,unzips zips.
+,wget,is utility to retrieve files from the Web
 ,vlc,"is a multi-platform MPEG, VCD/DVD, and DivX player "
 ,xclip,allows for copying and pasting from the command line.
 ,xcompmgr,is for transparency and removing screen-tearing.
@@ -64,16 +61,18 @@
 ,xorg-xprop,is a tool for detecting window properties.
 ,xorg-xwininfo,allows querying information about windows.
 ,xwallpaper,sets the wallpaper.
+,yarn,does dependency management
 ,youtube-dl,can download any YouTube video (or playlist or channel) when given the link.
 ,zsh-autosuggestions,suggests commands as you type based on history and completions
 ,zsh-completions,provides additional completion definitions for Zsh
 ,zsh-history-substring-search,alows serching history with with up and down keys
 ,zsh-syntax-highlighting,provides syntax highlighting for the zsh
 A,brave-bin,is chromium based web browser
+A,devour,provides swallowing feature for terminal emulators
 A,insomnia-bin,is API Client and Design Platform for GraphQL and REST
 A,jmtpfs,is FUSE and libmtp based filesystem for accessing MTP
 A,ly,is TUI display manager
-A,lf-git,is a terminal file manager
+A,lf,is a terminal file manager
 A,mailspring,is email client
 A,smartgit,is git client with Hg and SVN support.
 A,x2x-git,"allows the keyboard, mouse on one X display to control another X display"
@@ -87,3 +86,4 @@ G,https://github.com/DusanLesan/dmenu.git,runs commands and provides a UI for se
 G,https://github.com/DusanLesan/st.git,is my custom build of suckless's terminal emulator.
 G,https://github.com/DusanLesan/dwm.git,is the window manager.
 G,https://github.com/DusanLesan/slock.git,"allows you to lock your computer, and quickly unlock with your password."
+G,https://github.com/DusanLesan/sxiv.git,is a minimalist image viewer.
