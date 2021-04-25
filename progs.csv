@@ -21,21 +21,26 @@
 ,htop,is interactive process viewer
 ,imagemagick,is image viewing/manipulation program
 ,inetutils,is collection of common network programs providing telnet
+,isync,does IMAP synchronization
 ,libnotify,allows desktop notifications.
 ,libreoffice-still,is office suite
 ,lxsession,X11 session manager
+,lynx,is a text browser
 ,maim,can take quick screenshots at your request.
 ,man-db,lets you read man pages of programs.
 ,mpc,is a terminal interface for mpd.
 ,mpd,is a lightweight music daemon.
 ,mpv,is the patrician's choice video player.
+,msmtp,is a mini smtp client
 ,nano,is simple text editor
+,neomutt,is email client
 ,ncmpcpp,a ncurses interface for music with multiple formats and a powerful tag editor.
 ,neovim,is text editor
 ,networkmanager-openvpn,is network manager module for openvpn
 ,ntfs-3g,allows accessing NTFS partitions.
 ,p7zip,is file archiver
 ,pamixer,is a command-line audio interface.
+,pass,"stores, retrieves, generates, and synchronizes passwords securely"
 ,perl-file-mimeinfo,are used for generic support in xdg-open
 ,pulseaudio-alsa,is the audio system.
 ,pulsemixer,is an audio controler.
@@ -52,7 +57,6 @@
 ,wget,is utility to retrieve files from the Web
 ,vlc,"is a multi-platform MPEG, VCD/DVD, and DivX player "
 ,xclip,allows for copying and pasting from the command line.
-,xcompmgr,is for transparency and removing screen-tearing.
 ,xdotool,is X11 automation tool
 ,xdg-utils,are command line tools that assist with a variety of desktop tasks
 ,xorg-server,is the graphical server.
@@ -70,10 +74,8 @@
 A,brave-bin,is chromium based web browser
 A,devour,provides swallowing feature for terminal emulators
 A,insomnia-bin,is API Client and Design Platform for GraphQL and REST
-A,jmtpfs,is FUSE and libmtp based filesystem for accessing MTP
 A,ly,is TUI display manager
 A,lf,is a terminal file manager
-A,mailspring,is email client
 A,smartgit,is git client with Hg and SVN support.
 A,x2x-git,"allows the keyboard, mouse on one X display to control another X display"
 A,skypeforlinux-stable-bin,is Skype client
