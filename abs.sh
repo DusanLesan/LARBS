@@ -17,8 +17,6 @@ pacman --noconfirm --needed -S networkmanager
 systemctl enable NetworkManager
 systemctl start NetworkManager
 
-pacman --noconfirm --needed -S grub && grub-install --target=i386-pc /dev/sda && grub-mkconfig -o /boot/grub/grub.cfg
-
 while getopts ":a:r:b:p:h" o; do case "${o}" in
 	h) printf "Optional arguments for custom use:\\n  -r: Dotfiles repository (local file or url)\\n  -p: Dependencies and programs csv (local file or url)\\n  -a: AUR helper (must have pacman-like syntax)\\n  -h: Show this message\\n" && exit 1 ;;
 	r) dotfilesrepo=${OPTARG} && git ls-remote "$dotfilesrepo" || exit 1 ;;
@@ -29,9 +27,11 @@ while getopts ":a:r:b:p:h" o; do case "${o}" in
 esac done
 
 [ -z "$dotfilesrepo" ] && dotfilesrepo="https://github.com/DusanLesan/dotfiles.git"
-[ -z "$progsfile" ] && progsfile="https://raw.githubusercontent.com/DusanLesan/abs/master/progs.csv"
+[ -z "$progsfile" ] && progsfile="https://raw.githubusercontent.com/DusanLesan/larbs/master/progs.csv"
 [ -z "$aurhelper" ] && aurhelper="yay"
 [ -z "$repobranch" ] && repobranch="master"
+nvimManagerRepo="https://github.com/wbthomason/packer.nvim"
+nvimManagerDir=".local/share/nvim/site/pack/packer/start/packer.nvim"
 
 ### FUNCTIONS ###
 
@@ -39,7 +39,7 @@ installpkg(){ pacman --noconfirm --needed -S "$1" >/dev/null 2>&1 ;}
 
 error() { clear; printf "ERROR:\\n%s\\n" "$1" >&2; exit 1;}
 
-getuserandpass() { \
+getuserandpass() {
 	# Prompts user for new username an password.
 	name=$(dialog --inputbox "First, please enter a name for the user account." 10 60 3>&1 1>&2 2>&3 3>&1) || exit 1
 	while ! echo "$name" | grep -q "^[a-z_][a-z0-9_-]*$"; do
@@ -51,31 +51,33 @@ getuserandpass() { \
 		unset pass2
 		pass1=$(dialog --no-cancel --passwordbox "Passwords do not match.\\n\\nEnter password again." 10 60 3>&1 1>&2 2>&3 3>&1)
 		pass2=$(dialog --no-cancel --passwordbox "Retype password." 10 60 3>&1 1>&2 2>&3 3>&1)
-	done ;}
+	done ;
+}
 
-usercheck() { \
+usercheck() {
 	! { id -u "$name" >/dev/null 2>&1; } ||
 	dialog --colors --title "WARNING!" --yes-label "CONTINUE" --no-label "No wait..." --yesno "The user \`$name\` already exists on this system. LARBS can install for a user already existing, but it will \\Zboverwrite\\Zn any conflicting settings/dotfiles on the user account.\\n\\nLARBS will \\Zbnot\\Zn overwrite your user files, documents, videos, etc., so don't worry about that, but only click <CONTINUE> if you don't mind your settings being overwritten.\\n\\nNote also that LARBS will change $name's password to the one you just gave." 14 70
-	}
+}
 
-preinstallmsg() { \
+preinstallmsg() {
 	dialog --title "Let's get this party started!" --yes-label "Let's go!" --no-label "No, nevermind!" --yesno "The rest of the installation will now be totally automated, so you can sit back and relax.\\n\\nIt will take some time, but when done, you can relax even more with your complete system.\\n\\nNow just press <Let's go!> and the system will begin installation!" 13 60 || { clear; exit 1; }
-	}
+}
 
-adduserandpass() { \
+adduserandpass() {
 	# Adds user `$name` with password $pass1.
 	dialog --infobox "Adding user \"$name\"..." 4 50
 	useradd -m -g wheel -s /bin/zsh "$name" >/dev/null 2>&1 ||
 	usermod -a -G wheel "$name" && mkdir -p /home/"$name" && chown "$name":wheel /home/"$name"
 	repodir="/home/$name/.local/src"; mkdir -p "$repodir"; chown -R "$name":wheel "$(dirname "$repodir")"
 	echo "$name:$pass1" | chpasswd
-	unset pass1 pass2 ;}
+	unset pass1 pass2 ;
+}
 
-refreshkeys() { \
+refreshkeys() {
 	dialog --infobox "Refreshing Arch Keyring..." 4 40
 	pacman -Q artix-keyring >/dev/null 2>&1 && pacman --noconfirm -S artix-keyring >/dev/null 2>&1
 	pacman --noconfirm -S archlinux-keyring >/dev/null 2>&1
-	}
+}
 
 newperms() { # Set special sudoers settings for install (or after).
 	sed -i "/#LARBS/d" /etc/sudoers
@@ -90,12 +92,13 @@ manualinstall() { # Installs $1 manually if not installed. Used only for AUR hel
 	sudo -u "$name" tar -xvf "$1".tar.gz >/dev/null 2>&1 &&
 	cd "$1" &&
 	sudo -u "$name" makepkg --noconfirm -si >/dev/null 2>&1
-	cd /tmp || return 1) ;}
+	cd /tmp || return 1) ;
+}
 
 maininstall() { # Installs all needed programs from main repo.
 	dialog --title "LARBS Installation" --infobox "Installing \`$1\` ($n of $total). $1 $2" 5 70
 	installpkg "$1"
-	}
+}
 
 gitmakeinstall() {
 	progname="$(basename "$1" .git)"
@@ -105,26 +108,32 @@ gitmakeinstall() {
 	cd "$dir" || exit 1
 	make >/dev/null 2>&1
 	make install >/dev/null 2>&1
-	cd /tmp || return 1 ;}
+	cd /tmp || return 1 ;
+}
 
-aurinstall() { \
+aurinstall() {
 	dialog --title "LARBS Installation" --infobox "Installing \`$1\` ($n of $total) from the AUR. $1 $2" 5 70
 	echo "$aurinstalled" | grep -q "^$1$" && return 1
 	sudo -u "$name" $aurhelper -S --noconfirm "$1" >/dev/null 2>&1
-	}
+}
 
-pipinstall() { \
+pipinstall() {
 	dialog --title "LARBS Installation" --infobox "Installing the Python package \`$1\` ($n of $total). $1 $2" 5 70
 	[ -x "$(command -v "pip")" ] || installpkg python-pip >/dev/null 2>&1
 	yes | pip install "$1"
-	}
+}
 
-installationloop() { \
-	([ -f "$progsfile" ] && cp "$progsfile" /tmp/progs.csv) || curl -Ls "$progsfile" | sed '/^#/d' > /tmp/progs.csv
+installationloop() {
+	([ -f "$progsfile" ] && cp "$progsfile" /tmp/progs.csv) || curl -Ls "$progsfile" > /tmp/progs.csv
 	total=$(wc -l < /tmp/progs.csv)
 	aurinstalled=$(pacman -Qqm)
-	while IFS=, read -r tag program comment; do
+	tail -n +2 /tmp/progs.csv | while IFS=, read -r tag program comment shouldPrompt; do
 		n=$((n+1))
+
+		if [ -n "$shouldPrompt" ]; then
+			dialog --title "Alert" --yesno "$program $comment\nDo you want to install it?" 14 70 || continue
+		fi
+
 		echo "$comment" | grep -q "^\".*\"$" && comment="$(echo "$comment" | sed "s/\(^\"\|\"$\)//g")"
 		case "$tag" in
 			"A") aurinstall "$program" "$comment" ;;
@@ -132,21 +141,47 @@ installationloop() { \
 			"P") pipinstall "$program" "$comment" ;;
 			*) maininstall "$program" "$comment" ;;
 		esac
-	done < /tmp/progs.csv ;}
+	done
+}
 
 putgitrepo() { # Downloads a gitrepo $1 and places the files in $2 only overwriting conflicts
 	dialog --infobox "Downloading and installing config files..." 4 60
 	[ -z "$3" ] && branch="master" || branch="$repobranch"
 	dir=$(mktemp -d)
-	[ ! -d "$2" ] && mkdir -p "$2"
+	[ ! -d "$2" ] && sudo -u $name mkdir -p "$2"
 	chown -R "$name":wheel "$dir" "$2"
 	sudo -u "$name" git clone --recursive -b "$branch" --depth 1 "$1" "$dir" >/dev/null 2>&1
 	sudo -u "$name" cp -rfT "$dir" "$2"
-	}
+}
 
-systembeepoff() { dialog --infobox "Getting rid of that retarded error beep sound..." 10 50
+systembeepoff() {
+	dialog --infobox "Getting rid of that retarded error beep sound..." 10 50
 	rmmod pcspkr
-	echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf ;}
+	echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf ;
+}
+
+installBootloader(){
+	case $(dialog --title "Boot loader" --cancel-label "Skip" --menu "Select boot loader:" 7 70 0 "BIOS" "GRUB" "UEFI" "systemd-boot" 3>&1 1>&2 2>&3 3>&1) in
+		"BIOS")
+			while read -r path size; do
+				args+=("$path")
+				args+=("$size")
+			done < <(lsblk -dnrpo "name,size")
+			cmd=(dialog --keep-tite --menu "Select drive:" 22 76 16)
+			choice=$("${cmd[@]}" "${args[@]}" 2>&1 >/dev/tty)
+			[ -n "$choice" ] && pacman --noconfirm --needed -S grub && grub-install --target=i386-pc $choice && grub-mkconfig -o /boot/grub/grub.cfg ;;
+
+		"UEFI")
+			bootctl install
+			mkdir -p ~/boot/loader/entries/
+			root=$(lsblk -rpo "mountpoints,uuid" | grep -oP "^/ \K.*")
+			printf "%s\n%s\n%s\n%s" \
+				"title     Arch Lnux" \
+				"linux     /vmlinuz-linux" \
+				"initrd    /initramfs-linux.img" \
+				"options   root=PARTUUID=$root rw" > ~/boot/loader/entries/arch.conf ;;
+	esac
+}
 
 ### THE ACTUAL SCRIPT ###
 
@@ -188,6 +223,7 @@ newperms "%wheel ALL=(ALL) NOPASSWD: ALL"
 # Make pacman and yay colorful and adds eye candy on the progress bar because why not.
 grep -q "^Color" /etc/pacman.conf || sed -i "s/^#Color$/Color/" /etc/pacman.conf
 grep -q "ILoveCandy" /etc/pacman.conf || sed -i "/#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
+grep -q "^ParallelDownloads" /etc/pacman.conf || sed -i "s/^#ParallelDownloads.*/ParallelDownloads = $(grep -c "^processor" /proc/cpuinfo)/" /etc/pacman.conf
 
 # Use all cores for compilation.
 sed -i "s/-j2/-j$(nproc)/;s/^#MAKEFLAGS/MAKEFLAGS/" /etc/makepkg.conf
@@ -206,8 +242,14 @@ rm -f "/home/$name/README.md" "/home/$name/LICENSE" "/home/$name/FUNDING.yml"
 # make git ignore deleted LICENSE & README.md files
 git update-index --assume-unchanged "/home/$name/README.md" "/home/$name/LICENSE" "/home/$name/FUNDING.yml"
 
+# Set up nvim plugin manager
+putgitrepo "$nvimManagerRepo" "/home/$name/$nvimManagerDir"
+sudo -u "$name" nvim --headless -u "/home/$name/.config/nvim/lua/plugins/init.lua" -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+
 # Most important command! Get rid of the beep!
 systembeepoff
+
+installBootloader
 
 # Make zsh the default shell for the user.
 chsh -s /bin/zsh "$name" >/dev/null 2>&1
