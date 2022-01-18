@@ -11,8 +11,8 @@ esac done
 [ -z "$progsfile" ] && progsfile="https://raw.githubusercontent.com/DusanLesan/larbs/master/progs.csv"
 [ -z "$aurhelper" ] && aurhelper="yay"
 [ -z "$repobranch" ] && repobranch="master"
-nvimManagerRepo="https://github.com/wbthomason/packer.nvim"
-nvimManagerDir=".local/share/nvim/site/pack/packer/start/packer.nvim"
+nvimmanagerrepo="https://github.com/wbthomason/packer.nvim"
+nvimmanagerdir=".local/share/nvim/site/pack/packer/start/packer.nvim"
 
 ### FUNCTIONS ###
 
@@ -119,17 +119,28 @@ pipinstall() {
 	yes | pip install "$1"
 }
 
+getpackagelist() {
+	([ -f "$progsfile" ] && cp "$progsfile" /tmp/progs.csv) || curl -Ls "$progsfile" | tail -n +2 > /tmp/progs.csv
+	if [ $1 -eq 0 ]; then
+		cancel="Turn all off"
+		state="on"
+	else
+		cancel="Turn all on"
+		state="off"
+	fi
+
+	options=$(awk -F',' -v state="$state" '{print $2, state}' < /tmp/progs.csv)
+	cmd=(dialog --stdout --no-items --ok-label "Install" --cancel-label "$cancel" --checklist "Select packages to install:" 50 76 16)
+	selectedprograms=$( ("${cmd[@]}" ${options}) )
+	[ $? -eq 1 ] && getpackagelist $((1-$1))
+}
+
 installationloop() {
-	([ -f "$progsfile" ] && cp "$progsfile" /tmp/progs.csv) || curl -Ls "$progsfile" > /tmp/progs.csv
-	total=$(wc -l < /tmp/progs.csv)
+	total=$(wc -w <<< $selectedprograms)
 	aurinstalled=$(pacman -Qqm)
-	tail -n +2 /tmp/progs.csv | while IFS=, read -r tag program comment shouldPrompt; do
+	while IFS=, read -r tag program comment; do
+		[[ " ${selectedprograms[*]} " =~ " ${program} " ]] || continue
 		n=$((n+1))
-
-		if [ -n "$shouldPrompt" ]; then
-			dialog --title "Alert" --yesno "$program $comment\nDo you want to install it?" 14 70 || continue
-		fi
-
 		echo "$comment" | grep -q "^\".*\"$" && comment="$(echo "$comment" | sed "s/\(^\"\|\"$\)//g")"
 		case "$tag" in
 			"A") aurinstall "$program" "$comment" ;;
@@ -137,7 +148,7 @@ installationloop() {
 			"P") pipinstall "$program" "$comment" ;;
 			*) maininstall "$program" "$comment" ;;
 		esac
-	done
+	done < /tmp/progs.csv
 }
 
 putgitrepo() { # Downloads a gitrepo $1 and places the files in $2 only overwriting conflicts
@@ -196,6 +207,8 @@ displaymanager() {
 
 ### This is how everything happens in an intuitive format and order.
 
+basesetup
+
 # Check if user is root on Arch distro. Install dialog.
 pacman --noconfirm --needed -Sy dialog || error "Are you sure you're running this as the root user, are on an Arch-based distribution and have an internet connection?"
 
@@ -204,6 +217,9 @@ getuserandpass || error "User exited."
 
 # Give warning if user already exists.
 usercheck || error "User exited."
+
+# Allow user to select programs he wants
+getpackagelist 0
 
 # Last chance for user to back out before install.
 preinstallmsg || error "User exited."
@@ -250,7 +266,7 @@ rm -f "/home/$name/README.md" "/home/$name/LICENSE" "/home/$name/FUNDING.yml"
 git update-index --assume-unchanged "/home/$name/README.md" "/home/$name/LICENSE" "/home/$name/FUNDING.yml"
 
 # Set up nvim plugin manager
-putgitrepo "$nvimManagerRepo" "/home/$name/$nvimManagerDir"
+putgitrepo "$nvimmanagerrepo" "/home/$name/$nvimmanagerdir"
 sudo -u "$name" nvim --headless -u "/home/$name/.config/nvim/lua/plugins/init.lua" -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 
 # Compile programs from source directories
@@ -258,6 +274,9 @@ compilec /home/$name/.local/bin/statusbar/src
 
 # Most important command! Get rid of the beep!
 systembeepoff
+
+# Install display manager
+displaymanager
 
 # Install GRUB or systemd-boot
 bootloader
@@ -283,11 +302,8 @@ grep -q "OTHER_OPTS='-a pulseaudio -m alsa_seq -r 48000'" /etc/conf.d/fluidsynth
 # Start/restart PulseAudio.
 killall pulseaudio; sudo -u pulseaudio --start
 
-# Install display manager
-displaymanager
-
 # Remove dialog
-pacman -Rsns --noconfirm dialog
+pacman -Rcns --noconfirm dialog
 
 # This line, overwriting the `newperms` command above will allow the user to run
 # serveral important commands, `shutdown`, `reboot`, updating, etc. without a password.
