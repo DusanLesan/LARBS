@@ -1,22 +1,3 @@
-#Potential variables: timezone, lang and local
-
-passwd
-
-TZuser=$(cat tzfinal.tmp)
-
-ln -sf /usr/share/zoneinfo/$TZuser /etc/localtime
-
-hwclock --systohc
-
-echo "LANG=en_US.UTF-8" >> /etc/locale.conf
-echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
-echo "en_US ISO-8859-1" >> /etc/locale.gen
-locale-gen
-
-pacman --noconfirm --needed -S networkmanager
-systemctl enable NetworkManager
-systemctl start NetworkManager
-
 while getopts ":a:r:b:p:h" o; do case "${o}" in
 	h) printf "Optional arguments for custom use:\\n  -r: Dotfiles repository (local file or url)\\n  -p: Dependencies and programs csv (local file or url)\\n  -a: AUR helper (must have pacman-like syntax)\\n  -h: Show this message\\n" && exit 1 ;;
 	r) dotfilesrepo=${OPTARG} && git ls-remote "$dotfilesrepo" || exit 1 ;;
@@ -34,6 +15,21 @@ nvimManagerRepo="https://github.com/wbthomason/packer.nvim"
 nvimManagerDir=".local/share/nvim/site/pack/packer/start/packer.nvim"
 
 ### FUNCTIONS ###
+
+basesetup() {
+	passwd
+	TZuser=$(cat tzfinal.tmp)
+	ln -sf /usr/share/zoneinfo/$TZuser /etc/localtime
+	hwclock --systohc
+	echo "LANG=en_US.UTF-8" >> /etc/locale.conf
+	echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+	echo "en_US ISO-8859-1" >> /etc/locale.gen
+	locale-gen
+
+	pacman --noconfirm --needed -S networkmanager
+	systemctl enable NetworkManager
+	systemctl start NetworkManager
+}
 
 installpkg(){ pacman --noconfirm --needed -S "$1" >/dev/null 2>&1 ;}
 
@@ -154,13 +150,21 @@ putgitrepo() { # Downloads a gitrepo $1 and places the files in $2 only overwrit
 	sudo -u "$name" cp -rfT "$dir" "$2"
 }
 
+compilec() {
+	for sourcefile in $1/*; do
+		appname="${sourcefile##*/}"
+		appname="${appname//.c}"
+		gcc "$sourcefile" -o "/usr/local/bin/$appname"
+	done
+}
+
 systembeepoff() {
 	dialog --infobox "Getting rid of that retarded error beep sound..." 10 50
 	rmmod pcspkr
 	echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf ;
 }
 
-installBootloader(){
+bootloader() {
 	case $(dialog --title "Boot loader" --cancel-label "Skip" --menu "Select boot loader:" 7 70 0 "BIOS" "GRUB" "UEFI" "systemd-boot" 3>&1 1>&2 2>&3 3>&1) in
 		"BIOS")
 			while read -r path size; do
@@ -183,6 +187,11 @@ installBootloader(){
 	esac
 }
 
+displaymanager() {
+	aurinstall ly
+	systemctl enable ly.service
+}
+
 ### THE ACTUAL SCRIPT ###
 
 ### This is how everything happens in an intuitive format and order.
@@ -198,8 +207,6 @@ usercheck || error "User exited."
 
 # Last chance for user to back out before install.
 preinstallmsg || error "User exited."
-
-### The rest of the script requires no user input.
 
 # Refresh Arch keyrings.
 refreshkeys || error "Error automatically refreshing Arch keyring. Consider doing so manually."
@@ -222,8 +229,8 @@ newperms "%wheel ALL=(ALL) NOPASSWD: ALL"
 
 # Make pacman and yay colorful and adds eye candy on the progress bar because why not.
 grep -q "^Color" /etc/pacman.conf || sed -i "s/^#Color$/Color/" /etc/pacman.conf
-grep -q "ILoveCandy" /etc/pacman.conf || sed -i "/#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
-grep -q "^ParallelDownloads" /etc/pacman.conf || sed -i "s/^#ParallelDownloads.*/ParallelDownloads = $(grep -c "^processor" /proc/cpuinfo)/" /etc/pacman.conf
+grep -q "ILoveCandy" /etc/pacman.conf || sed -ir "s/#VerbosePkgLists/VerbosePkgLists\nILoveCandy/" /etc/pacman.conf
+grep -q "^ParallelDownloads" /etc/pacman.conf || sed -i "s/^#ParallelDownloads.*/ParallelDownloads = $(nproc)/" /etc/pacman.conf
 
 # Use all cores for compilation.
 sed -i "s/-j2/-j$(nproc)/;s/^#MAKEFLAGS/MAKEFLAGS/" /etc/makepkg.conf
@@ -246,17 +253,18 @@ git update-index --assume-unchanged "/home/$name/README.md" "/home/$name/LICENSE
 putgitrepo "$nvimManagerRepo" "/home/$name/$nvimManagerDir"
 sudo -u "$name" nvim --headless -u "/home/$name/.config/nvim/lua/plugins/init.lua" -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 
+# Compile programs from source directories
+compilec /home/$name/.local/bin/statusbar/src
+
 # Most important command! Get rid of the beep!
 systembeepoff
 
-installBootloader
+# Install GRUB or systemd-boot
+bootloader
 
 # Make zsh the default shell for the user.
 chsh -s /bin/zsh "$name" >/dev/null 2>&1
 sudo -u "$name" mkdir -p "/home/$name/.cache/zsh/"
-
-# dbus UUID must be generated for Artix runit.
-dbus-uuidgen > /var/lib/dbus/machine-id
 
 # Tap to click
 [ ! -f /etc/X11/xorg.conf.d/40-libinput.conf ] && printf 'Section "InputClass"
@@ -275,8 +283,8 @@ grep -q "OTHER_OPTS='-a pulseaudio -m alsa_seq -r 48000'" /etc/conf.d/fluidsynth
 # Start/restart PulseAudio.
 killall pulseaudio; sudo -u pulseaudio --start
 
-# Enable display manager
-sudo systemctl enable ly.service
+# Install display manager
+displaymanager
 
 # Remove dialog
 pacman -Rsns --noconfirm dialog
