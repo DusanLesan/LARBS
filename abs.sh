@@ -1,3 +1,5 @@
+#!/bin/sh
+
 while getopts ":a:r:b:p:h" o; do case "${o}" in
 	h) printf "Optional arguments for custom use:\\n  -r: Dotfiles repository (local file or url)\\n  -p: Dependencies and programs csv (local file or url)\\n  -a: AUR helper (must have pacman-like syntax)\\n  -h: Show this message\\n" && exit 1 ;;
 	r) dotfilesrepo=${OPTARG} && git ls-remote "$dotfilesrepo" || exit 1 ;;
@@ -15,7 +17,6 @@ nvimmanagerrepo="https://github.com/wbthomason/packer.nvim"
 nvimmanagerdir=".local/share/nvim/site/pack/packer/start/packer.nvim"
 
 ### FUNCTIONS ###
-
 basesetup() {
 	passwd
 	TZuser=$(cat tzfinal.tmp)
@@ -36,103 +37,98 @@ installpkg(){ pacman --noconfirm --needed -S "$1" >/dev/null 2>&1 ;}
 error() { clear; printf "ERROR:\\n%s\\n" "$1" >&2; exit 1;}
 
 getuserandpass() {
-	# Prompts user for new username an password.
-	name=$(dialog --inputbox "First, please enter a name for the user account." 10 60 3>&1 1>&2 2>&3 3>&1) || exit 1
+	name=$(whiptail --inputbox "First, please enter a name for the user account." 10 60 3>&1 1>&2 2>&3 3>&1) || exit 1
 	while ! echo "$name" | grep -q "^[a-z_][a-z0-9_-]*$"; do
-		name=$(dialog --no-cancel --inputbox "Username not valid. Give a username beginning with a letter, with only lowercase letters, - or _." 10 60 3>&1 1>&2 2>&3 3>&1)
+		name=$(whiptail --nocancel --inputbox "Username not valid. Give a username beginning with a letter, with only lowercase letters, - or _." 10 60 3>&1 1>&2 2>&3 3>&1)
 	done
-	pass1=$(dialog --no-cancel --passwordbox "Enter a password for that user." 10 60 3>&1 1>&2 2>&3 3>&1)
-	pass2=$(dialog --no-cancel --passwordbox "Retype password." 10 60 3>&1 1>&2 2>&3 3>&1)
+	pass1=$(whiptail --nocancel --passwordbox "Enter a password for that user." 10 60 3>&1 1>&2 2>&3 3>&1)
+	pass2=$(whiptail --nocancel --passwordbox "Retype password." 10 60 3>&1 1>&2 2>&3 3>&1)
 	while ! [ "$pass1" = "$pass2" ]; do
 		unset pass2
-		pass1=$(dialog --no-cancel --passwordbox "Passwords do not match.\\n\\nEnter password again." 10 60 3>&1 1>&2 2>&3 3>&1)
-		pass2=$(dialog --no-cancel --passwordbox "Retype password." 10 60 3>&1 1>&2 2>&3 3>&1)
-	done ;
+		pass1=$(whiptail --nocancel --passwordbox "Passwords do not match.\\n\\nEnter password again." 10 60 3>&1 1>&2 2>&3 3>&1)
+		pass2=$(whiptail --nocancel --passwordbox "Retype password." 10 60 3>&1 1>&2 2>&3 3>&1)
+	done
 }
 
 usercheck() {
 	! { id -u "$name" >/dev/null 2>&1; } ||
-	dialog --colors --title "WARNING!" --yes-label "CONTINUE" --no-label "No wait..." --yesno "The user \`$name\` already exists on this system. LARBS can install for a user already existing, but it will \\Zboverwrite\\Zn any conflicting settings/dotfiles on the user account.\\n\\nLARBS will \\Zbnot\\Zn overwrite your user files, documents, videos, etc., so don't worry about that, but only click <CONTINUE> if you don't mind your settings being overwritten.\\n\\nNote also that LARBS will change $name's password to the one you just gave." 14 70
+		whiptail --title "WARNING" --yes-button "CONTINUE" \
+			--no-button "No wait..." \
+			--yesno "The user \`$name\` already exists on this system. LARBS can install for a user already existing, but it will OVERWRITE any conflicting settings/dotfiles on the user account.\\n\\nLARBS will NOT overwrite your user files, documents, videos, etc., so don't worry about that, but only click <CONTINUE> if you don't mind your settings being overwritten.\\n\\nNote also that LARBS will change $name's password to the one you just gave." 14 70
 }
 
 preinstallmsg() {
-	dialog --title "Let's get this party started!" --yes-label "Let's go!" --no-label "No, nevermind!" --yesno "The rest of the installation will now be totally automated, so you can sit back and relax.\\n\\nIt will take some time, but when done, you can relax even more with your complete system.\\n\\nNow just press <Let's go!> and the system will begin installation!" 13 60 || { clear; exit 1; }
+	whiptail --title "Let's get this party started!" --yes-button "Let's go!" \
+		--no-button "No, nevermind!" \
+		--yesno "The rest of the installation will now be totally automated, so you can sit back and relax.\\n\\nIt will take some time, but when done, you can relax even more with your complete system.\\n\\nNow just press <Let's go!> and the system will begin installation!" 13 60 || { clear; exit 1; }
 }
 
 adduserandpass() {
-	# Adds user `$name` with password $pass1.
-	dialog --infobox "Adding user \"$name\"..." 4 50
-	useradd -m -g wheel -s /bin/zsh "$name" >/dev/null 2>&1 ||
-	usermod -a -G wheel "$name" && mkdir -p /home/"$name" && chown "$name":wheel /home/"$name"
-	repodir="/home/$name/.local/src"; mkdir -p "$repodir"; chown -R "$name":wheel "$(dirname "$repodir")"
+	whiptail --infobox "Adding user \"$name\"..." 7 50
+	useradd -m -g wheel -s /bin/zsh "$name" >/dev/null 2>&1 \
+		|| usermod -a -G wheel "$name" && mkdir -p /home/"$name" && chown "$name":wheel /home/"$name"
+	export repodir="/home/$name/.local/src"
+	mkdir -p "$repodir"
+	chown -R "$name":wheel "$(dirname "$repodir")"
 	echo "$name:$pass1" | chpasswd
-	unset pass1 pass2 ;
+	unset pass1 pass2
 }
 
 refreshkeys() {
-	dialog --infobox "Refreshing Arch Keyring..." 4 40
-	pacman -Q artix-keyring >/dev/null 2>&1 && pacman --noconfirm -S artix-keyring >/dev/null 2>&1
+	whiptail --infobox "Refreshing Arch Keyring..." 7 40
 	pacman --noconfirm -S archlinux-keyring >/dev/null 2>&1
 }
 
-newperms() { # Set special sudoers settings for install (or after).
-	sed -i "/#LARBS/d" /etc/sudoers
-	echo "$* #LARBS" >> /etc/sudoers ;}
-
-manualinstall() { # Installs $1 manually if not installed. Used only for AUR helper here.
-	[ -f "/usr/bin/$1" ] || (
-	dialog --infobox "Installing \"$1\", an AUR helper..." 4 50
-	cd /tmp || exit 1
-	rm -rf /tmp/"$1"*
-	curl -sO https://aur.archlinux.org/cgit/aur.git/snapshot/"$1".tar.gz &&
-	sudo -u "$name" tar -xvf "$1".tar.gz >/dev/null 2>&1 &&
-	cd "$1" &&
-	sudo -u "$name" makepkg --noconfirm -si >/dev/null 2>&1
-	cd /tmp || return 1) ;
+manualinstall() {
+	whiptail --infobox "Installing \"$1\", an AUR helper..." 7 50
+	sudo -u "$name" mkdir -p "$repodir/$1"
+	sudo -u "$name" git -C "$repodir" clone --depth 1 --single-branch \
+		--no-tags -q "https://aur.archlinux.org/$1.git" "$repodir/$1" ||
+		{ cd "$repodir/$1" || return 1 ; sudo -u "$name" git pull --force origin master ;}
+	cd "$repodir/$1" || exit 1
+	sudo -u "$name" -D "$repodir/$1" \
+		makepkg --noconfirm -si >/dev/null 2>&1 || return 1
 }
 
-maininstall() { # Installs all needed programs from main repo.
-	dialog --title "LARBS Installation" --infobox "Installing \`$1\` ($n of $total). $1 $2" 5 70
+maininstall() {
+	whiptail --title "LARBS Installation" --infobox "Installing \`$1\` ($n of $total). $1 $2" 9 70
 	installpkg "$1"
 }
 
 gitmakeinstall() {
-	progname="$(basename "$1" .git)"
+	progname="${1##*/}"
+	progname="${progname%.git}"
 	dir="$repodir/$progname"
-	dialog --title "LARBS Installation" --infobox "Installing \`$progname\` ($n of $total) via \`git\` and \`make\`. $(basename "$1") $2" 5 70
-	sudo -u "$name" git clone --depth 1 "$1" "$dir" >/dev/null 2>&1 || { cd "$dir" || return 1 ; sudo -u "$name" git pull --force origin master;}
+	whiptail --title "LARBS Installation" \
+		--infobox "Installing \`$progname\` ($n of $total) via \`git\` and \`make\`. $(basename "$1") $2" 8 70
+	sudo -u "$name" git -C "$repodir" clone --depth 1 --single-branch \
+		--no-tags -q "$1" "$dir" ||
+		{ cd "$dir" || return 1 ; sudo -u "$name" git pull --force origin master ;}
 	cd "$dir" || exit 1
 	make >/dev/null 2>&1
 	make install >/dev/null 2>&1
-	cd /tmp || return 1 ;
+	cd /tmp || return 1
 }
 
 aurinstall() {
-	dialog --title "LARBS Installation" --infobox "Installing \`$1\` ($n of $total) from the AUR. $1 $2" 5 70
+	whiptail --title "LARBS Installation" \
+		--infobox "Installing \`$1\` ($n of $total) from the AUR. $1 $2" 9 70
 	echo "$aurinstalled" | grep -q "^$1$" && return 1
 	sudo -u "$name" $aurhelper -S --noconfirm "$1" >/dev/null 2>&1
 }
 
 pipinstall() {
-	dialog --title "LARBS Installation" --infobox "Installing the Python package \`$1\` ($n of $total). $1 $2" 5 70
+	whiptail --title "LARBS Installation" \
+		--infobox "Installing the Python package \`$1\` ($n of $total). $1 $2" 9 70
 	[ -x "$(command -v "pip")" ] || installpkg python-pip >/dev/null 2>&1
 	yes | pip install "$1"
 }
 
 getpackagelist() {
 	([ -f "$progsfile" ] && cp "$progsfile" /tmp/progs.csv) || curl -Ls "$progsfile" | tail -n +2 > /tmp/progs.csv
-	if [ $1 -eq 0 ]; then
-		cancel="Turn all off"
-		state="on"
-	else
-		cancel="Turn all on"
-		state="off"
-	fi
-
-	options=$(awk -F',' -v state="$state" '{print $2, state}' < /tmp/progs.csv)
-	cmd=(dialog --stdout --no-items --ok-label "Install" --cancel-label "$cancel" --checklist "Select packages to install:" 50 76 16)
-	selectedprograms=$( ("${cmd[@]}" ${options}) )
-	[ $? -eq 1 ] && getpackagelist $((1-$1))
+	options=$(awk -F',' '{print $2, "off"}' < /tmp/progs.csv)
+	cmd=(whiptail --checklist --noitem --separate-output --ok-button "Install" --nocancel --title "Select packages to install:" "choose" 40 76 30)
+	 selectedprograms=( $("${cmd[@]}" ${options} 3>&1 1>&2 2>&3) )
 }
 
 installationloop() {
@@ -151,13 +147,15 @@ installationloop() {
 	done < /tmp/progs.csv
 }
 
-putgitrepo() { # Downloads a gitrepo $1 and places the files in $2 only overwriting conflicts
-	dialog --infobox "Downloading and installing config files..." 4 60
+putgitrepo() {
+	whiptail --infobox "Downloading and installing config files..." 7 60
 	[ -z "$3" ] && branch="master" || branch="$repobranch"
 	dir=$(mktemp -d)
-	[ ! -d "$2" ] && sudo -u $name mkdir -p "$2"
-	chown -R "$name":wheel "$dir" "$2"
-	sudo -u "$name" git clone --recursive -b "$branch" --depth 1 "$1" "$dir" >/dev/null 2>&1
+	[ ! -d "$2" ] && mkdir -p "$2"
+	chown "$name":wheel "$dir" "$2"
+	sudo -u "$name" git -C "$repodir" clone --depth 1 \
+		--single-branch --no-tags -q --recursive -b "$branch" \
+		--recurse-submodules "$1" "$dir"
 	sudo -u "$name" cp -rfT "$dir" "$2"
 }
 
@@ -170,19 +168,19 @@ compilec() {
 }
 
 systembeepoff() {
-	dialog --infobox "Getting rid of that retarded error beep sound..." 10 50
+	whiptail --infobox "Getting rid of error beep sound..." 10 50
 	rmmod pcspkr
 	echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf ;
 }
 
 bootloader() {
-	case $(dialog --title "Boot loader" --cancel-label "Skip" --menu "Select boot loader:" 7 70 0 "BIOS" "GRUB" "UEFI" "systemd-boot" 3>&1 1>&2 2>&3 3>&1) in
+	case $(whiptail --title "Boot loader" --cancel-button "Skip" --menu "Select boot loader:" 7 70 0 "BIOS" "GRUB" "UEFI" "systemd-boot" 3>&1 1>&2 2>&3 3>&1) in
 		"BIOS")
 			while read -r path size; do
 				args+=("$path")
-				args+=("$size")
+				args+=(" $size")
 			done < <(lsblk -dnrpo "name,size")
-			cmd=(dialog --keep-tite --menu "Select drive:" 22 76 16)
+			cmd=(whiptail --menu "Select drive:" 22 76 16)
 			choice=$("${cmd[@]}" "${args[@]}" 2>&1 >/dev/tty)
 			[ -n "$choice" ] && pacman --noconfirm --needed -S grub && grub-install --target=i386-pc $choice && grub-mkconfig -o /boot/grub/grub.cfg ;;
 
@@ -205,12 +203,10 @@ displaymanager() {
 
 ### THE ACTUAL SCRIPT ###
 
-### This is how everything happens in an intuitive format and order.
-
 basesetup
 
-# Check if user is root on Arch distro. Install dialog.
-pacman --noconfirm --needed -Sy dialog || error "Are you sure you're running this as the root user, are on an Arch-based distribution and have an internet connection?"
+# Check if user is root on Arch distro. Install whiptail.
+pacman --noconfirm --needed -Sy libnewt || error "Are you sure you're running this as the root user, are on an Arch-based distribution and have an internet connection?"
 
 # Get and verify username and password.
 getuserandpass || error "User exited."
@@ -219,7 +215,7 @@ getuserandpass || error "User exited."
 usercheck || error "User exited."
 
 # Allow user to select programs he wants
-getpackagelist 0
+getpackagelist
 
 # Last chance for user to back out before install.
 preinstallmsg || error "User exited."
@@ -227,12 +223,14 @@ preinstallmsg || error "User exited."
 # Refresh Arch keyrings.
 refreshkeys || error "Error automatically refreshing Arch keyring. Consider doing so manually."
 
-for x in curl base-devel git ntp zsh; do
-	dialog --title "LARBS Installation" --infobox "Installing \`$x\` which is required to install and configure other programs." 5 70
+for x in curl ca-certificates base-devel git ntp zsh ; do
+	whiptail --title "LARBS Installation" \
+		--infobox "Installing \`$x\` which is required to install and configure other programs." 8 70
 	installpkg "$x"
 done
 
-dialog --title "LARBS Installation" --infobox "Synchronizing system time to ensure successful and secure installation of software..." 4 70
+whiptail --title "LARBS Installation" \
+	--infobox "Synchronizing system time to ensure successful and secure installation of software..." 8 70
 ntpdate 0.us.pool.ntp.org >/dev/null 2>&1
 
 adduserandpass || error "Error adding username and/or password."
@@ -302,12 +300,9 @@ grep -q "OTHER_OPTS='-a pulseaudio -m alsa_seq -r 48000'" /etc/conf.d/fluidsynth
 # Start/restart PulseAudio.
 killall pulseaudio; sudo -u pulseaudio --start
 
-# Remove dialog
-pacman -Rcns --noconfirm dialog
-
 # This line, overwriting the `newperms` command above will allow the user to run
 # serveral important commands, `shutdown`, `reboot`, updating, etc. without a password.
 newperms "%wheel ALL=(ALL) ALL #LARBS
-%wheel ALL=(ALL) NOPASSWD: /usr/bin/shutdown,/usr/bin/reboot,/usr/bin/systemctl suspend,/usr/bin/wifi-menu,/usr/bin/mount,/usr/bin/umount,/usr/bin/pacman -Syu,/usr/bin/pacman -Syyu,/usr/bin/packer -Syu,/usr/bin/packer -Syyu,/usr/bin/systemctl restart NetworkManager,/usr/bin/rc-service NetworkManager restart,/usr/bin/pacman -Syyu --noconfirm,/usr/bin/loadkeys,/usr/bin/yay,/usr/bin/pacman -Syyuw --noconfirm"
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/shutdown,/usr/bin/reboot,/usr/bin/systemctl suspend,/usr/bin/mount,/usr/bin/umount,/usr/bin/pacman -Syu,/usr/bin/pacman -Syyu,/usr/bin/rc-service NetworkManager restart,/usr/bin/pacman -Syyu --noconfirm,/usr/bin/yay,/usr/bin/pacman -Syyuw --noconfirm"
 
 clear
