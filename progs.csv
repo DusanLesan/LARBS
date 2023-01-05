@@ -19,12 +19,10 @@
 ,libreoffice-still,is office suite
 ,libxft,is font drawing library required for dwm
 ,libxinerama,is Xinerama library required for dwm
-,lxsession-gtk3,X11 session manager
-,maim,can take quick screenshots at your request.
 ,man-db,lets you read man pages of programs.
 ,mpv,is the patrician's choice video player.
 ,neovim,is text editor
-,networkmanager-openvpn,is network manager module for openvpn
+,openvpn,is providing VPN support
 ,npm,is a package manager for javascript
 ,ntfs-3g,allows accessing NTFS partitions.
 ,p7zip,is file archiver
@@ -54,6 +52,7 @@
 A,archivemount,does mounting of compressed archives
 A,brave-bin,is chromium based web browser
 A,ctpv-git,is fast previewer for lf
+A,cmd-polkit-git,is command line tool for custom polkit agents
 A,devour,provides swallowing feature for terminal emulators
 A,dragon-drop,is simple drag-and-drop source/sink for X
 A,insomnia-bin,is API Client and Design Platform for GraphQL and REST
@@ -62,7 +61,6 @@ A,ly,is TUI display manager
 A,mattermost-desktop-bin,is Mattermost desktop client
 A,nsxiv,is a minimalist image viewer.
 A,slack-desktop,is Slack Desktop client
-A,smartgit,is git client with Hg and SVN support.
 G,https://github.com/DusanLesan/dwm.git,is the window manager
 G,https://github.com/DusanLesan/dwmblocks.git,serves as the modular status bar
 G,https://github.com/DusanLesan/dmenu.git,runs commands and provides a UI for selection.
