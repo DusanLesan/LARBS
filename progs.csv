@@ -2,63 +2,71 @@
 ,alacritty,is GPU-accelerated terminal emulator
 ,bat,is cat clone with syntax highlighting
 ,cmus,is ncurses-based music player
-,code,is Microsoft’s IDE
-,cronie,is task scheduler
-,dnsmasq,is required for making wifi hotspots
-,dunst,is a suckless notification system.
+,code,is source code editor with plugin support
+,dunst,is lightweight and customizable notification daemon
 ,fzf,is command-line fuzzy finder
-,gamemode,allows games to request optimisations from host OS
-,github-cli,is GitHub on the command line
+,gamemode,is daemon to optimize the host system for games
+,git,is distributed version control system
+,github-cli,is command-line tool for interacting with GitHub
 ,gnome-keyring,serves as the system keyring.
-,htop,is interactive process viewer
-,imagemagick,is image viewing/manipulation program
+,hostapd,is user space daemon software for access point and authentication
+,htop,is interactive process viewer and system monitor
+,imagemagick,is software suite for image manipulation
 ,inetutils,is collection of common network programs providing telnet
+,iw,is tool for configuring and displaying wireless network interfaces
+,iwd,is daemon for managing wireless network interfaces and connections
 ,jq,is command-line JSON processor
+,jre-openjdk,is open-source implementation of the Java Platform
 ,lazygit,is simple terminal UI for git commands
-,libnotify,allows desktop notifications.
-,libreoffice-still,is office suite
+,lf,is terminal file manager with detailed view
+,libnotify,is library for sending desktop notifications
 ,libxft,is font drawing library required for dwm
-,libxinerama,is Xinerama library required for dwm
-,man-db,lets you read man pages of programs.
-,mpv,is the patrician's choice video player.
-,neovim,is text editor
-,openvpn,is providing VPN support
+,libxinerama,is library for managing multi-monitor layouts required for dwm
+,man-db,lets you read man pages of programs
+,mattermost-desktop,is desktop application for Mattermost messaging platform
+,mpv,is the media video player.
+,neovim,is fork of Vim focused on extensibility and modernization
+,openvpn,is open-source VPN solution for secure communication
 ,npm,is a package manager for javascript
-,ntfs-3g,allows accessing NTFS partitions.
+,ntfs-3g,allows accessing NTFS partitions
+,ntp,is Network Time Protocol daemon
 ,p7zip,is file archiver
 ,perl-file-mimeinfo,are used for generic support in xdg-open
-,pulseaudio-alsa,is the audio system.
-,pulsemixer,is an audio controler.
+,poppler,is PDF rendering library
+,pulseaudio-alsa,is the audio system
+,pulsemixer,is an audio controler
+,rsync,is fast and versatile file copying tool
 ,sshfs,is ssh file transfer protocol client
 ,steam,is Valve's digital software delivery system
-,transmission-gtk,is a feature rich cross platform Transmission BitTorrent client
+,sudo,is program for allowing restricted root access to users
+,transmission-cli,is command-line interface for the Transmission BitTorrent client.
 ,ttf-jetbrains-mono,is typeface for developers by JetBrains
 ,ttf-nerd-fonts-symbols-1000-em,is collection of extra glyphs from popular 'iconic fonts'
 ,ueberzug,allows images displaying in combination with X11
-,unclutter,hides an inactive mouse.
 ,unrar,extracts rar's.
 ,unzip,unzips zips.
 ,wget,is utility to retrieve files from the Web
+,xbanish,hides the mouse cursor when typing
 ,xclip,allows for copying and pasting from the command line.
+,xcolor,manipulates and generates color schemes from the command line
 ,xdg-utils,are command line tools that assist with a variety of desktop tasks
-,xdotool,is X11 automation tool
 ,xorg-server,is the graphical server.
 ,xorg-xprop,is a tool for detecting window properties.
 ,xorg-xrdb,loads resources from Xresources.
+,zip,is compression and file packaging utility
+,zsh,is UNIX command interpreter shell.
 ,zsh-autosuggestions,suggests commands as you type based on history and completions
 ,zsh-completions,provides additional completion definitions for Zsh
 ,zsh-history-substring-search,alows serching history with with up and down keys
 ,zsh-syntax-highlighting,provides syntax highlighting for the zsh
-A,archivemount,does mounting of compressed archives
+A,archivemount,mounts archives as a regular directories
 A,brave-bin,is chromium based web browser
 A,ctpv-git,is fast previewer for lf
 A,cmd-polkit-git,is command line tool for custom polkit agents
 A,devour,provides swallowing feature for terminal emulators
 A,dragon-drop,is simple drag-and-drop source/sink for X
 A,insomnia-bin,is API Client and Design Platform for GraphQL and REST
-A,lf-bin,is a terminal file manager
 A,ly,is TUI display manager
-A,mattermost-desktop-bin,is Mattermost desktop client
 A,nsxiv,is a minimalist image viewer.
 A,slack-desktop,is Slack Desktop client
 G,https://github.com/DusanLesan/dwm.git,is the window manager
